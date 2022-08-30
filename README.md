@@ -3,6 +3,8 @@ Spring Batchを習得するためのリポジトリです。
 CSVファイルを読み込み、DBにインポートを行います。
 
 # 使用ツール
-Java(17)
-Springboot(2.7.3)
-PostgreSQL
+ - Java(17)
+ - Springboot(2.7.3)
+ - PostgreSQL
+ -  mybatis(2.2.2)
+ - Spring Batch
