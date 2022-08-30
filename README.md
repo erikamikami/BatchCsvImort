@@ -8,3 +8,4 @@ CSVファイルを読み込み、DBにインポートを行います。
  - PostgreSQL
  -  mybatis(2.2.2)
  - Spring Batch
+ - JUnit5
