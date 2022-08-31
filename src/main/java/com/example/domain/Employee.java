@@ -1,5 +1,8 @@
 package com.example.domain;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,9 +18,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Employee {
 	
+	@NotNull
 	private Integer id;
+	
+	@NotNull
 	private String name;
+	
+	@Min(20)
 	private Integer age;
+	
 	private Integer gender;
 	private String genderString;
 	

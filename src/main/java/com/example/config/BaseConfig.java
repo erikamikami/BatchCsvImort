@@ -16,6 +16,7 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.support.CompositeItemProcessor;
+import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -94,10 +95,27 @@ public abstract class BaseConfig {
 		
 		CompositeItemProcessor<Employee, Employee> compositeProcessor = new CompositeItemProcessor<>();
 		
-		compositeProcessor.setDelegates(Arrays.asList(this.existsCheckProcessor, this.genderConvertProcessor)); // Listに追加した順でProcessorが実行される
+		compositeProcessor.setDelegates(Arrays.asList(validationProcessor(), this.existsCheckProcessor, this.genderConvertProcessor)); // Listに追加した順でProcessorが実行される
 		
 		return compositeProcessor;
 		
+	}
+	
+	/**
+	 * BeanValidatingItemProcessorを使用すれば、アノテーションによるバリデーションを実装できる
+	 * バリデーションエラーが発生したときの挙動は、setFilter()で設定する
+	 * @return
+	 */
+	@Bean
+	@StepScope
+	public BeanValidatingItemProcessor<Employee> validationProcessor(){
+		BeanValidatingItemProcessor<Employee> validationProcessor = new BeanValidatingItemProcessor<>();
+		
+		// true: スキップし、バッチ処理を停止せずに次のデータの処理へ進む
+		// false: ValidationExeceptionを投げ、途中で停止する
+		validationProcessor.setFilter(true);
+		
+		return validationProcessor;
 	}
 
 }
