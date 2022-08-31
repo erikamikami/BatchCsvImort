@@ -13,7 +13,7 @@ public class ReadListener implements ItemReadListener<Employee>{
 	
 	@Override
 	public void beforeRead() {
-		log.info("ReadListenerのBeforeRead");
+//		log.info("ReadListenerのBeforeRead");
 		
 	}
 

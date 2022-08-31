@@ -1,6 +1,8 @@
 package com.example.config;
 
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
@@ -8,12 +10,15 @@ import org.springframework.batch.core.ItemWriteListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 
 import com.example.domain.Employee;
@@ -29,10 +34,15 @@ public abstract class BaseConfig {
 	@Autowired
 	protected StepBuilderFactory stepBuilderFactory;
 	
-	/**	Processor **/
+	/**	Processor（性別の文字列を数値に変換する） **/
 	@Autowired
 	@Qualifier("GenderConvertProcessor")
 	protected ItemProcessor<Employee, Employee> genderConvertProcessor;
+	
+	/**	Processor（id指定でデータの存在をチェックする） **/
+	@Autowired
+	@Qualifier("ExistsCheckProcessor")
+	protected ItemProcessor<Employee, Employee> existsCheckProcessor;
 	
 	/**	ReadListener **/
 	@Autowired
@@ -51,9 +61,11 @@ public abstract class BaseConfig {
 	protected SampleProperty sampleProperty;
 	
 	
+	@Bean
+	@StepScope
 	public FlatFileItemReader<Employee> csvReader(){
 		// CSVのカラムに付ける名前
-		String[] nameArray = new String[] {"id","name","age","gender"};
+		String[] nameArray = new String[] {"id","name","age","genderString"};
 		
 		//ファイルの読み込み設定
 		return new FlatFileItemReaderBuilder<Employee>() // Builderをまず取得する
@@ -69,6 +81,22 @@ public abstract class BaseConfig {
 												}
 											})
 											.build();
+		
+	}
+	
+	/**
+	 * 複数のProcessor
+	 * @return
+	 */
+	@Bean
+	@StepScope
+	public ItemProcessor<Employee, Employee> compositeProcessor(){
+		
+		CompositeItemProcessor<Employee, Employee> compositeProcessor = new CompositeItemProcessor<>();
+		
+		compositeProcessor.setDelegates(Arrays.asList(this.existsCheckProcessor, this.genderConvertProcessor)); // Listに追加した順でProcessorが実行される
+		
+		return compositeProcessor;
 		
 	}
 

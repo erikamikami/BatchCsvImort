@@ -6,8 +6,8 @@ spring:
       initialize-schema: always
       schema: classpath:org/springframework/batch/core/schema-postgresql.sql
   datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/SpringSecurityDemoApp
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/spring-batch
     username: postgres
     password: postgres
       

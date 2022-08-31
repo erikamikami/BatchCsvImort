@@ -15,7 +15,7 @@ public class WriteListener implements ItemWriteListener<Employee>{
 	
 	@Override
 	public void beforeWrite(List<? extends Employee> items) {
-		log.info("beforeWrite: size={}", items.size());
+//		log.info("beforeWrite: size={}", items.size());
 		
 	}
 

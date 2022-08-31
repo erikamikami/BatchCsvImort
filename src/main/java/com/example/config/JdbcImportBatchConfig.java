@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -29,7 +30,10 @@ public class JdbcImportBatchConfig extends BaseConfig{
 	 * JdbcBatchItemWriterを使用すれば、DBへ書き込みができる
 	 * @return
 	 */
+	@Bean
+	@StepScope
 	public JdbcBatchItemWriter<Employee> jdbcWriter(){
+		
 		// providerの作成
 		BeanPropertyItemSqlParameterSourceProvider<Employee> provider = new BeanPropertyItemSqlParameterSourceProvider<>();
 		
@@ -48,10 +52,10 @@ public class JdbcImportBatchConfig extends BaseConfig{
 	 */
 	@Bean
 	public Step csvImportJdbcStep() {
-		return this.stepBuilderFactory.get("csvImportJdbcStep")
+		return this.stepBuilderFactory.get("CsvImportJdbcStep")
 								.<Employee, Employee>chunk(10)
 								.reader(csvReader()).listener(this.readListener)
-								.processor(genderConvertProcessor).listener(this.processListener)
+								.processor(compositeProcessor()).listener(this.processListener)
 								.writer(jdbcWriter()).listener(this.writeListener)
 								.build();
 		
@@ -61,9 +65,9 @@ public class JdbcImportBatchConfig extends BaseConfig{
 	 * Jobの作成
 	 * @return
 	 */
-	@Bean
+	@Bean("JdbcJob")
 	public Job csvImportJdbcJob() {
-		return this.jobBuilderFactory.get("csvImportJdbcJob")
+		return this.jobBuilderFactory.get("CsvImportJdbcJob")
 								.incrementer(new RunIdIncrementer())
 								.start(csvImportJdbcStep())
 								.build();
