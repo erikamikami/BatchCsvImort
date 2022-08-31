@@ -1,5 +1,8 @@
 package com.example.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -16,9 +19,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Employee {
 	
 	@NotNull
+	@Id
 	private Integer id;
 	
 	@NotNull
@@ -28,6 +33,8 @@ public class Employee {
 	private Integer age;
 	
 	private Integer gender;
+	
+	@Transient
 	private String genderString;
 	
 	/**
