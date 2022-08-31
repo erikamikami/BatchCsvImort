@@ -13,8 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GenderConvertProcessor implements ItemProcessor<Employee, Employee>{
 	
+	
 	/**
-	 * 性別の文字列を数値に変換する
+	 * 従業員の性別の文字列を数値に変換する
 	 *
 	 */
 	@Override
